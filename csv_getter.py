@@ -6,8 +6,20 @@ api_key = "Qe9Im0C47NqNaU52Bs4hQsTrWoryROEU2L40T2YaxrUAPXr5A5tgySSUmmPm9gYY" #CR
 secret_key = "rhMQ8mTcte4G7axxT9SIeWiD1qAF8pudE7MCCogBTgcFPgMjAePJwm3isjg0fxDg" #VERY IMPORTANT
 print("Data ")
 client = Client(api_key, secret_key, tld='us')
-with open('data', 'w', newline='') as file:
-    writer = csv.writer(file)
-    writer.writerow(["Time", "Price", "Delay"])
-    for kline in client.get_historical_klines_generator("ETHUSDT", Client.KLINE_INTERVAL_1MINUTE, "1 day ago UTC"):
-        writer.writerow([kline[0], kline[4], float(kline[2]) - float(kline[3])])
+start_date = input("Start date: ")
+end_date = input("End date: ")
+month = input("First three letters of month: ")
+year = input("Year: ")
+
+def get_data(start_date, end_date, month, year):
+    with open("eth_usd_data/"+start_date+"_"+end_date+month+year, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Time", "Price", "Delay"])
+        if(start_date != end_date):
+            for kline in client.get_historical_klines_generator("ETHUSDT", Client.KLINE_INTERVAL_1MINUTE, start_date + " " + month + ", " + year, end_date + " " + month + ", " + year):
+                writer.writerow([kline[0], kline[4], float(kline[2]) - float(kline[3])])
+        else:
+            for kline in client.get_historical_klines_generator("ETHUSDT", Client.KLINE_INTERVAL_1MINUTE, end_date + " " + month + ", " + year):
+                writer.writerow([kline[0], kline[4], float(kline[2]) - float(kline[3])])
+
+get_data(start_date, end_date, month, year)
