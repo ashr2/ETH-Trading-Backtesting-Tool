@@ -1,17 +1,11 @@
 #Tool to help get .csv file for ETH-USD data that we can use for backtesting
-import pandas as pd
 import csv
 from binance.client import Client
 api_key = "Qe9Im0C47NqNaU52Bs4hQsTrWoryROEU2L40T2YaxrUAPXr5A5tgySSUmmPm9gYY" #CREATE NEW API KEY IN THE FUTURE
 secret_key = "rhMQ8mTcte4G7axxT9SIeWiD1qAF8pudE7MCCogBTgcFPgMjAePJwm3isjg0fxDg" #VERY IMPORTANT
-print("Data ")
-client = Client(api_key, secret_key, tld='us')
-start_date = input("Start date: ")
-end_date = input("End date: ")
-month = input("First three letters of month: ")
-year = input("Year: ")
 
 def get_data(start_date, end_date, month, year):
+    client = Client(api_key, secret_key, tld='us')
     with open("eth_usd_data/"+start_date+"_"+end_date+month+year, 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["Time", "Price", "Delay"])
@@ -21,5 +15,11 @@ def get_data(start_date, end_date, month, year):
         else:
             for kline in client.get_historical_klines_generator("ETHUSDT", Client.KLINE_INTERVAL_1MINUTE, end_date + " " + month + ", " + year):
                 writer.writerow([kline[0], kline[4], float(kline[2]) - float(kline[3])])
+    return("eth_usd_data/"+start_date+"_"+end_date+month+year)
 
-get_data(start_date, end_date, month, year)
+def command_interface():
+    start_date = input("Start date: ")
+    end_date = input("End date: ")
+    month = input("First three letters of month: ")
+    year = input("Year: ")
+    return([start_date, end_date, month, year])
